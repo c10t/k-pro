@@ -17,9 +17,7 @@ def unique2(string):
     # Assume charset is ASCII (128 chars)
     if len(string) > 128:
         return False
-
-    charset = {char for char in string}
-    return len(string) == len(charset)
+    pass
 
 
 class Test(unittest.TestCase):
