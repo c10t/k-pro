@@ -12,38 +12,34 @@ def main():
     for _ in range(h):
         c.append([char for char in input()])
 
-    start = (0, 0)
-    goal = (0, 0)
+    sx, sy = (0, 0)
+    gx, gy = (0, 0)
     for i, row in enumerate(c):
         for j, item in enumerate(row):
             if item == 's':
-                start = (i, j)
+                sx, sy = (i, j)
             if item == 'g':
-                goal = (i, j)
+                gx, gy = (i, j)
 
     reached = [[False for _ in range(w)] for _ in range(h)]
-    # print(c)
-    # print(start)
-    # print(goal)
 
     def search(x, y):
-        # print(x, y)
-        if x < 0 or x > w - 1 or y < 0 or y > h - 1:
+        if x < 0 or x > h - 1 or y < 0 or y > w - 1:
             return
-        if c[y][x] == '#':
+        if c[x][y] == '#':
             return
-        if reached[y][x]:
+        if reached[x][y]:
             return
 
-        reached[y][x] = True
+        reached[x][y] = True
 
         search(x + 1, y)
         search(x - 1, y)
         search(x, y + 1)
         search(x, y - 1)
 
-    search(start[0], start[1])
-    print('Yes' if reached[goal[0]][goal[1]] else 'No')
+    search(sx, sy)
+    print('Yes' if reached[gx][gy] else 'No')
 
 
 main()
