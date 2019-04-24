@@ -1,6 +1,10 @@
 
 # https://atc001.contest.atcoder.jp/tasks/dfs_a
 
+# https://teratail.com/questions/139765
+import sys
+sys.setrecursionlimit(10 ** 6)
+
 
 def main():
     h, w = list(map(int, input().split()))
@@ -36,7 +40,7 @@ def main():
         search(x + 1, y)
         search(x - 1, y)
         search(x, y + 1)
-        search(y, y - 1)
+        search(x, y - 1)
 
     search(start[0], start[1])
     print('Yes' if reached[goal[0]][goal[1]] else 'No')
