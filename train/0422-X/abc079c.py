@@ -1,20 +1,23 @@
+
+
+def find(abcd):
+    a, b, c, d = abcd
+    ops = ['{}{}{}'.format(i, j, k)
+           for i in [1, 2] for j in [1, 2] for k in [1, 2]]
+    opr = {'1': '+', '2': '-'}
+
+    for op in ops:
+        expression = a + opr[op[0]] + b + opr[op[1]] + c + opr[op[2]] + d
+        try:
+            if eval(expression) == 7:
+                return(expression)
+        except SyntaxError:
+            pass
+
+
 def main():
     abcd = input()
-    ops = [i for i in range(len(abcd) - 1)]
+    print('{}=7'.format(find(abcd)))
 
-    powset = []
-    for i in range(1 << len(ops)):
-        powset.append([ops[j] for j in range(len(ops)) if ((i >> j) & 1) == 1])
 
-    result = ''
-    for places in powset:
-        expressions = []
-        for i, char in enumerate(s):
-            if i in places:
-                f += char + '+'
-            else:
-                f += char
-        expressions.append(f)
-        checklist = list(map(eval, expressions))
-
-    print(result)
+main()
