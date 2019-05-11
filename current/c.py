@@ -12,31 +12,30 @@ def main():
         idt = len(categorized)
         itself = word.count('AB')
 
-        has_A_rs = word.endsWith('A')
+        has_A_rs = word.endswith('A')
         # has_B_rs = word.endsWith('B')
         # has_A_ls = word.startsWith('A')
-        has_B_ls = word.startsWith('B')
+        has_B_ls = word.startswith('B')
 
         categorized.append({
             'w': word, '#': idt, 'itself': itself,
             'rA': has_A_rs, 'lB': has_B_ls
         })
 
-        # lXrX = [w for w in categorized if not w['rA'] and not w['rB']]
-        lBrA = len([w for w in categorized if w['rA'] and w['rB']])
-        lBrX = len([w for w in categorized if not w['rA'] and w['rB']])
-        lXrA = len([w for w in categorized if w['rA'] and not w['rB']])
+    # lXrX = [w for w in categorized if not w['rA'] and not w['rB']]
+    lBrA = len([w for w in categorized if w['rA'] and w['lB']])
+    lBrX = len([w for w in categorized if not w['rA'] and w['lB']])
+    lXrA = len([w for w in categorized if w['rA'] and not w['lB']])
 
-        s = sum([w['itself'] for w in categorized])
-        if lBrA == 0:
-            s += min(lBrX, lXrA)
-        else:
-            if lBrX == lXrA:
-                s += lBrX + (lBrA - 1)
-            else:
-                pass
+    s = sum([w['itself'] for w in categorized])
+    if lBrA == 0:
+        s += min(lBrX, lXrA)
+    elif lBrX + lXrA > 0:
+        s += lBrA + min(lBrX, lXrA)
+    else:
+        s += lBrA - 1
 
-        print(s)
+    print(s)
 
 
 if __name__ == '__main__':
