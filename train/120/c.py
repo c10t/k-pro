@@ -1,0 +1,5 @@
+s = input()
+s0 = sum([1 for char in s if char == "0"])
+s1 = sum([1 for char in s if char == "1"])
+answer = 2 * min(s0, s1)
+print(answer)
