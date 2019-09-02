@@ -16,5 +16,6 @@ for i in range(n):
 # tastes = np.array(tastes)
 # print(tastes)
 
+# count_nonzero has no axis option for old numpy ( < 1.12.0 )
 score = np.sum(np.sum(tastes == 1, axis=0) == n)
 print(score)
