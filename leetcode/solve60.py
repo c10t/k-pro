@@ -40,6 +40,27 @@ class Solution:
 
         return root.next
 
+    # https://leetcode.com/problems/longest-substring-without-repeating-characters/
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        candidate = {}
+        memo = {}
+        substr = ''
+        for i, char in enumerate(s):
+            # print('---')
+            # print(substr)
+            # print(memo)
+            if char in memo:
+                candidate[substr] = len(substr)
+                substr = s[memo[char] + 1 : i]
+                memo = {char: memo[char] for char in substr}
+
+            memo[char] = i
+            substr += char
+
+        candidate[substr] = len(substr)
+        # print(candidate)
+        return max(candidate.values())
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -66,6 +87,11 @@ class Test(unittest.TestCase):
         answer = 807
         submission = self.solve.addTwoNumbers(tolist(l1), tolist(l2))
         self.assertEqual(toint(submission), answer)
+
+    def test_LongestSubstringWithoutRepeatingChars_ExampleCase(self):
+        case = [("abcabcbb", 3), ("bbbbb", 1), ("pwwkew", 3), ("dvdf", 3)]
+        for s, answer in case:
+            self.assertEqual(self.solve.lengthOfLongestSubstring(s), answer)
 
 
 if __name__ == "__main__":
