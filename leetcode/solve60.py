@@ -61,6 +61,68 @@ class Solution:
         # print(candidate)
         return max(candidate.values())
 
+    # https://leetcode.com/problems/zigzag-conversion/
+    def convert(self, s: str, numRows: int) -> str:
+        if numRows == 1:
+            return s
+        if numRows == 2:
+            even = ''.join([char for i, char in enumerate(s) if i % 2 == 0])
+            oddd = ''.join([char for i, char in enumerate(s) if i % 2 == 1])
+            return even + oddd
+        nmat = [['' for _ in range(len(s))] for _ in range(numRows)]
+        divider = numRows + (numRows - 2)
+
+        for i, char in enumerate(s):
+            quot, reminder = divmod(i, divider)
+            if reminder < numRows:
+                # print(quot, reminder)
+                nmat[reminder][quot + (numRows - 2) * quot] = char
+            else:
+                col = numRows - 2 - reminder + numRows
+                row = quot + (numRows - 2) * quot + numRows - 1 - col
+                nmat[col][row] = char
+
+        answer = ''
+        for line in nmat:
+            # print(line)
+            answer += ''.join(line)
+
+        return answer
+
+    def myAtoi(self, st: str) -> int:
+        s = st.strip()
+        decimal = '0123456789'
+        value = ''
+        sign = 1
+        for i, char in enumerate(s):
+
+            if (char != '+' and char != '-') and char not in decimal:
+                break
+            if (char == '+' or char == '-') and i > 0:
+                # print('here1')
+                break
+            if (char == '+' or char == '-') and i == 0:
+                # print('here')
+                sign = -1 if char == '-' else 1
+                continue
+            value += char
+
+        if len(value) < 1:
+            return 0
+
+        answer = sign * int(value)
+
+        INT_MAX = 2 ** 31 - 1
+        INT_MIN = -2 ** 31
+
+        if answer < INT_MIN:
+            return INT_MIN
+
+        if answer > INT_MAX:
+            return INT_MAX
+
+        return answer
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -92,6 +154,24 @@ class Test(unittest.TestCase):
         case = [("abcabcbb", 3), ("bbbbb", 1), ("pwwkew", 3), ("dvdf", 3)]
         for s, answer in case:
             self.assertEqual(self.solve.lengthOfLongestSubstring(s), answer)
+
+    def test_ZigZagConversion_ExampleCase(self):
+        case = [
+            ("PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"),
+            ("PAYPALISHIRING", 4, "PINALSIGYAHRPI"),
+            ("A", 1, "A")
+        ]
+        for s, numRows, answer in case:
+            self.assertEqual(self.solve.convert(s, numRows), answer)
+
+    def test_MyAtoI_ExampleCase(self):
+        case = [
+            ("42", 42), ("   -42", -42), ("+1", 1), ("++1", 0)
+            ("4193 with words", 4193), ("words and 987", 0),
+            ("-91283472332", -2147483648), ("0-1", 0)
+        ]
+        for s, answer in case:
+            self.assertEqual(self.solve.myAtoi(s), answer)
 
 
 if __name__ == "__main__":
