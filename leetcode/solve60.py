@@ -123,6 +123,40 @@ class Solution:
 
         return answer
 
+    def isValid(self, s: str) -> bool:
+        stack = []
+        for char in reversed(s):
+            # print(char)
+            stack_remain = len(stack) > 0
+            closed_parenthesis = char in ['(', '[', '{']
+            if not stack_remain and closed_parenthesis:
+                # print('NG')
+                return False
+            if not stack_remain and not closed_parenthesis:
+                # print('stacking F')
+                stack.append(char)
+                continue
+            if stack_remain and not closed_parenthesis:
+                # print('stacking C')
+                stack.append(char)
+                continue
+            if stack_remain and closed_parenthesis:
+                last = stack.pop()
+                # print('pop:', last)
+                if char == '(' and last == ')':
+                    # print('()')
+                    continue
+                if char == '[' and last == ']':
+                    # print('[]')
+                    continue
+                if char == '{' and last == '}':
+                    # print('{}')
+                    continue
+                # print('here')
+                return False
+
+        return False if len(stack) > 0 else True
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -166,12 +200,20 @@ class Test(unittest.TestCase):
 
     def test_MyAtoI_ExampleCase(self):
         case = [
-            ("42", 42), ("   -42", -42), ("+1", 1), ("++1", 0)
+            ("42", 42), ("   -42", -42), ("+1", 1), ("++1", 0),
             ("4193 with words", 4193), ("words and 987", 0),
             ("-91283472332", -2147483648), ("0-1", 0)
         ]
         for s, answer in case:
             self.assertEqual(self.solve.myAtoi(s), answer)
+
+    def test_IsValidParenthesis_ExampleCase(self):
+        case = [
+            ("()", True), ("()[]{}", True), ("(]", False),
+            ("([)]", False), ("{[]}", True), ("}", False)
+        ]
+        for s, answer in case:
+            self.assertEqual(self.solve.isValid(s), answer)
 
 
 if __name__ == "__main__":
