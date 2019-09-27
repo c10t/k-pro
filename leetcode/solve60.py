@@ -1,5 +1,6 @@
 import unittest
 from typing import List
+from bisect import bisect_right
 
 
 class ListNode:
@@ -44,7 +45,7 @@ class Solution:
     def lengthOfLongestSubstring(self, s: str) -> int:
         candidate = {}
         memo = {}
-        substr = ''
+        substr = ""
         for i, char in enumerate(s):
             # print('---')
             # print(substr)
@@ -66,10 +67,10 @@ class Solution:
         if numRows == 1:
             return s
         if numRows == 2:
-            even = ''.join([char for i, char in enumerate(s) if i % 2 == 0])
-            oddd = ''.join([char for i, char in enumerate(s) if i % 2 == 1])
+            even = "".join([char for i, char in enumerate(s) if i % 2 == 0])
+            oddd = "".join([char for i, char in enumerate(s) if i % 2 == 1])
             return even + oddd
-        nmat = [['' for _ in range(len(s))] for _ in range(numRows)]
+        nmat = [["" for _ in range(len(s))] for _ in range(numRows)]
         divider = numRows + (numRows - 2)
 
         for i, char in enumerate(s):
@@ -82,28 +83,28 @@ class Solution:
                 row = quot + (numRows - 2) * quot + numRows - 1 - col
                 nmat[col][row] = char
 
-        answer = ''
+        answer = ""
         for line in nmat:
             # print(line)
-            answer += ''.join(line)
+            answer += "".join(line)
 
         return answer
 
     def myAtoi(self, st: str) -> int:
         s = st.strip()
-        decimal = '0123456789'
-        value = ''
+        decimal = "0123456789"
+        value = ""
         sign = 1
         for i, char in enumerate(s):
 
-            if (char != '+' and char != '-') and char not in decimal:
+            if (char != "+" and char != "-") and char not in decimal:
                 break
-            if (char == '+' or char == '-') and i > 0:
+            if (char == "+" or char == "-") and i > 0:
                 # print('here1')
                 break
-            if (char == '+' or char == '-') and i == 0:
+            if (char == "+" or char == "-") and i == 0:
                 # print('here')
-                sign = -1 if char == '-' else 1
+                sign = -1 if char == "-" else 1
                 continue
             value += char
 
@@ -128,7 +129,7 @@ class Solution:
         for char in reversed(s):
             # print(char)
             stack_remain = len(stack) > 0
-            closed_parenthesis = char in ['(', '[', '{']
+            closed_parenthesis = char in ["(", "[", "{"]
             if not stack_remain and closed_parenthesis:
                 # print('NG')
                 return False
@@ -143,19 +144,56 @@ class Solution:
             if stack_remain and closed_parenthesis:
                 last = stack.pop()
                 # print('pop:', last)
-                if char == '(' and last == ')':
+                if char == "(" and last == ")":
                     # print('()')
                     continue
-                if char == '[' and last == ']':
+                if char == "[" and last == "]":
                     # print('[]')
                     continue
-                if char == '{' and last == '}':
+                if char == "{" and last == "}":
                     # print('{}')
                     continue
                 # print('here')
                 return False
 
         return False if len(stack) > 0 else True
+
+    def generateParenthesis(self, n: int) -> List[str]:
+        if n == 0:
+            return []
+        else:
+            return self.helper([""], n, 0)
+
+    def helper(self, container, m, num_closes):
+        # print('m={0}, num_closes={1}'.format(m, num_closes))
+        # print(container)
+        if m == 0:
+            return [s + ")" * num_closes for s in container]
+        if num_closes == 0:
+            return self.helper([s + "(" for s in container], m - 1, num_closes + 1)
+        else:
+            return self.helper(
+                [s + "(" for s in container], m - 1, num_closes + 1
+            ) + self.helper([s + ")" for s in container], m, num_closes - 1)
+
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        if len(nums) == 0:
+            return
+
+        i = len(nums) - 1
+        while i > 0 and nums[i - 1] >= nums[i]:
+            i -= 1
+
+        if i < 1:
+            nums.reverse()
+            return
+        else:
+            nums[i:] = nums[: i - 1 : -1]
+            j = bisect_right(nums, nums[i - 1], i)
+            nums[j], nums[i - 1] = nums[i - 1], nums[j]
 
 
 class Test(unittest.TestCase):
@@ -179,6 +217,7 @@ class Test(unittest.TestCase):
 
         def addTwoNumbers(l1, l2):
             return tolist(toint(l1) + toint(l2))
+
         l1, l2 = (342, 465)
         answer = 807
         submission = self.solve.addTwoNumbers(tolist(l1), tolist(l2))
@@ -193,27 +232,52 @@ class Test(unittest.TestCase):
         case = [
             ("PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"),
             ("PAYPALISHIRING", 4, "PINALSIGYAHRPI"),
-            ("A", 1, "A")
+            ("A", 1, "A"),
         ]
         for s, numRows, answer in case:
             self.assertEqual(self.solve.convert(s, numRows), answer)
 
     def test_MyAtoI_ExampleCase(self):
         case = [
-            ("42", 42), ("   -42", -42), ("+1", 1), ("++1", 0),
-            ("4193 with words", 4193), ("words and 987", 0),
-            ("-91283472332", -2147483648), ("0-1", 0)
+            ("42", 42),
+            ("   -42", -42),
+            ("+1", 1),
+            ("++1", 0),
+            ("4193 with words", 4193),
+            ("words and 987", 0),
+            ("-91283472332", -2147483648),
+            ("0-1", 0),
         ]
         for s, answer in case:
             self.assertEqual(self.solve.myAtoi(s), answer)
 
     def test_IsValidParenthesis_ExampleCase(self):
         case = [
-            ("()", True), ("()[]{}", True), ("(]", False),
-            ("([)]", False), ("{[]}", True), ("}", False)
+            ("()", True),
+            ("()[]{}", True),
+            ("(]", False),
+            ("([)]", False),
+            ("{[]}", True),
+            ("}", False),
         ]
         for s, answer in case:
             self.assertEqual(self.solve.isValid(s), answer)
+
+    def test_GenerateParentheses_ExampleCase(self):
+        case = [(3, ["((()))", "(()())", "(())()", "()(())", "()()()"])]
+        for num, answer in case:
+            self.assertCountEqual(self.solve.generateParenthesis(num), answer)
+
+    def test_NextPermutation_ExampleCase(self):
+        case = [
+            ([1, 2, 3], [1, 3, 2]),
+            ([3, 2, 1], [1, 2, 3]),
+            ([1, 1, 5], [1, 5, 1]),
+            ([1, 3, 2], [2, 1, 3]),
+        ]
+        for i, o in case:
+            self.solve.nextPermutation(i)  # destructive!
+            self.assertSequenceEqual(i, o)
 
 
 if __name__ == "__main__":
