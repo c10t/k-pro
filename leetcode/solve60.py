@@ -1,6 +1,6 @@
 import unittest
 from typing import List
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 
 
 class ListNode:
@@ -195,6 +195,33 @@ class Solution:
             j = bisect_right(nums, nums[i - 1], i)
             nums[j], nums[i - 1] = nums[i - 1], nums[j]
 
+    def search_in_rotated(self, nums: List[int], target: int) -> int:
+        l = len(nums)  # O(1)
+        if l < 1:
+            return -1
+
+        b = [0, l]
+        while b[0] != b[1]:  # O(log n)?
+            # print(b)
+            mean = (b[0] + b[1]) // 2
+            i, j = b[0], b[1]
+            if nums[mean] - nums[i] > 0:
+                b = [mean, j]
+            else:
+                b = [i, mean]
+        # print(b)
+
+        if nums[(i + 1) % l] - nums[i] < 0:
+            i = (i + 1) % l
+
+        idx = bisect_left(nums[i:l] + nums[0:i], target) + i  # O(log n)?
+        idx %= l
+        return idx if nums[idx] == target else -1
+
+    def search_insert(self, nums: List[int], target: int) -> int:
+        idx = bisect_left(nums, target)
+        return idx
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -278,6 +305,23 @@ class Test(unittest.TestCase):
         for i, o in case:
             self.solve.nextPermutation(i)  # destructive!
             self.assertSequenceEqual(i, o)
+
+    def test_SearchInRotatedSortedArray_ExampleCase(self):
+        case = [([4, 5, 6, 7, 0, 1, 2], 0, 4), ([4, 5, 6, 7, 0, 1, 2], 3, -1)]
+        for nums, target, expected in case:
+            output = self.solve.search_in_rotated(nums, target)
+            self.assertEqual(output, expected)
+
+    def test_SearchInsertPosition_ExampleCase(self):
+        case = [
+            ([1, 3, 5, 6], 5, 2),
+            ([1, 3, 5, 6], 2, 1),
+            ([1, 3, 5, 6], 7, 4),
+            ([1, 3, 5, 6], 0, 0),
+        ]
+        for nums, target, expected in case:
+            output = self.solve.search_insert(nums, target)
+            self.assertEqual(output, expected)
 
 
 if __name__ == "__main__":
