@@ -1,7 +1,7 @@
 import sys
 import unittest
 from typing import List
-from itertools import permutations
+from itertools import accumulate, permutations
 from collections import defaultdict
 
 sys.setrecursionlimit(10 ** 6)
@@ -66,6 +66,52 @@ class Solution:
 
         return ans if n >= 0 else 1 / ans
 
+    # https://leetcode.com/problems/maximum-subarray/
+    def maxSubArrayDP(self, nums: List[int]) -> int:
+        # DP - O(n)
+        dp = [0] * len(nums)
+        dp[0] = nums[0]
+        for i in range(1, len(nums)):
+            dp[i] = max(dp[i - 1] + nums[i], nums[i])
+
+        return max(dp)
+
+    def maxSubArrayDC(self, nums: List[int]) -> int:
+        # Divide and Conquer - O(log n) ? but slow...
+        return self.subProblem(nums, 0, len(nums) - 1)
+
+    def subProblem(self, nums: List[int], lo: int, hi: int) -> int:
+        # print(nums, lo, hi)
+        mid = lo + (hi - lo) // 2
+
+        if lo == hi:
+            return nums[mid]
+
+        l_max = self.subProblem(nums, lo, mid)
+        r_max = self.subProblem(nums, mid + 1, hi)
+        x_max = nums[mid]
+
+        acc = x_max
+        l, r = mid - 1, mid + 1
+
+        # scan from middle to left
+        while l >= lo:
+            acc += nums[l]
+            x_max = acc if acc > x_max else x_max
+            l -= 1
+
+        acc = x_max
+        # scan from middle to rignt
+        while r <= hi:
+            acc += nums[r]
+            x_max = acc if acc > x_max else x_max
+            r += 1
+
+        return max(x_max, l_max, r_max)
+
+    def maxSubArrayIT(self, nums: List[int]) -> int:
+        return max(accumulate(nums, lambda x, y: max(y, x + y)))
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -107,6 +153,16 @@ class Test(unittest.TestCase):
         for x, n, expected in case:
             answer = self.solve.myPow(x, n)
             self.assertAlmostEqual(answer, expected)
+
+    def test_MaximumSubarray(self):
+        case = [([-2, 1, -3, 4, -1, 2, 1, -5, 4], 6)]
+        for nums, expected in case:
+            answer1 = self.solve.maxSubArrayDC(nums)
+            answer2 = self.solve.maxSubArrayDP(nums)
+            answer3 = self.solve.maxSubArrayIT(nums)
+            self.assertEqual(answer1, expected)
+            self.assertEqual(answer2, expected)
+            self.assertEqual(answer3, expected)
 
 
 if __name__ == "__main__":
