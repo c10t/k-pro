@@ -112,6 +112,20 @@ class Solution:
     def maxSubArrayIT(self, nums: List[int]) -> int:
         return max(accumulate(nums, lambda x, y: max(y, x + y)))
 
+    def uniquePaths(self, m: int, n: int) -> int:
+        return self.updp({}, m, n)
+
+    def updp(self, dp: dict, m: int, n: int) -> int:
+        if m == 1 and n == 1:
+            return 1
+        elif m < 1 or n < 1:
+            return 0
+        elif (m, n) in dp:
+            return dp[(m, n)]
+
+        dp[(m, n)] = self.updp(dp, m - 1, n) + self.updp(dp, m, n - 1)
+        return dp[(m, n)]
+
 
 class Test(unittest.TestCase):
     def setUp(self):
@@ -163,6 +177,12 @@ class Test(unittest.TestCase):
             self.assertEqual(answer1, expected)
             self.assertEqual(answer2, expected)
             self.assertEqual(answer3, expected)
+
+    def test_UniquePaths(self):
+        case = [(3, 2, 3), (7, 3, 28)]
+        for m, n, expected in case:
+            answer = self.solve.uniquePaths(m, n)
+            self.assertEqual(answer, expected)
 
 
 if __name__ == "__main__":
