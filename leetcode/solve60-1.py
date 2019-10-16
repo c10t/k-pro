@@ -90,6 +90,7 @@ class Solution:
 
         return answer
 
+    # https://leetcode.com/problems/string-to-integer-atoi
     def myAtoi(self, st: str) -> int:
         s = st.strip()
         decimal = "0123456789"
@@ -124,6 +125,7 @@ class Solution:
 
         return answer
 
+    # https://leetcode.com/problems/valid-parentheses
     def isValid(self, s: str) -> bool:
         stack = []
         for char in reversed(s):
@@ -158,6 +160,7 @@ class Solution:
 
         return False if len(stack) > 0 else True
 
+    # https://leetcode.com/problems/generate-parentheses
     def generateParenthesis(self, n: int) -> List[str]:
         if n == 0:
             return []
@@ -176,6 +179,7 @@ class Solution:
                 [s + "(" for s in container], m - 1, num_closes + 1
             ) + self.helper([s + ")" for s in container], m, num_closes - 1)
 
+    # https://leetcode.com/problems/next-permutation
     def nextPermutation(self, nums: List[int]) -> None:
         """
         Do not return anything, modify nums in-place instead.
@@ -195,6 +199,7 @@ class Solution:
             j = bisect_right(nums, nums[i - 1], i)
             nums[j], nums[i - 1] = nums[i - 1], nums[j]
 
+    # https://leetcode.com/problems/search-in-rotated-sorted-array
     def search_in_rotated(self, nums: List[int], target: int) -> int:
         l = len(nums)  # O(1)
         if l < 1:
@@ -218,6 +223,7 @@ class Solution:
         idx %= l
         return idx if nums[idx] == target else -1
 
+    # https://leetcode.com/problems/search-insert-position
     def search_insert(self, nums: List[int], target: int) -> int:
         idx = bisect_left(nums, target)
         return idx
