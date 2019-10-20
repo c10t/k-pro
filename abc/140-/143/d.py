@@ -17,8 +17,9 @@ count = 0
 #         if a + b > last:
 #             count += 1
 
+# O((n ** 2) * log n)
 for i in range(n - 1, 1, -1):
-    for j in range(i - 1, 1, -1):
+    for j in range(i - 1, 0, -1):
         idx = bisect_left(ls[:j], ls[i] - ls[j] + 1)
         if idx < j:
             count += j - idx
