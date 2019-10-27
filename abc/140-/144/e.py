@@ -1,22 +1,24 @@
-from heapq import heapify, heappop, heappush
+import numpy as np
 
 n, k = map(int, input().split())
 a = list(map(int, input().split()))
 f = list(map(int, input().split()))
 
-q = sorted([-ai for ai in a])
-heapify(q)
+a = np.sort(a)
+f = np.sort(f)[::-1]
 
-for _ in range(k):
-    max_cost = -heappop(q)
-    if max_cost != 0:
-        heappush(q, -(max_cost - 1))
+
+def ok(x):
+    return np.clip(a - x // f, 0, None).sum() <= k
+
+
+l, r = 0, 10 ** 12
+
+while l <= r:
+    mid = (l + r) // 2
+    if ok(mid):
+        r = mid - 1
     else:
-        heappush(q, 0)
+        l = mid + 1
 
-opt_a = sorted([-qi for qi in q])
-opt_f = sorted(f, reverse=True)
-print(opt_a[i] * opt_f[i] for i in range(n))
-opt = max(opt_a[i] * opt_f[i] for i in range(n))
-
-print(opt)
+print(l)
